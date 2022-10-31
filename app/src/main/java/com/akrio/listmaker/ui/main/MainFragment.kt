@@ -24,10 +24,6 @@ class MainFragment : Fragment() {
 
     private lateinit var binding: FragmentMainBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -48,19 +44,19 @@ class MainFragment : Fragment() {
             MainViewModelFactory(PreferenceManager.getDefaultSharedPreferences(requireActivity()))
         )
             .get(MainViewModel::class.java)
-        Log.d(TAG,"Calling for ViewModelProvider")
 
         val recyclerViewAdapter =
             ListSelectionRecyclerViewAdapter(viewModel.lists)
-        Log.d(TAG,"Creating RecyclerViewAdapter")
 
         binding.listsRecyclerview.adapter = recyclerViewAdapter
-
-        Log.d(TAG,"Binging adapter to RecycledView")
 
         viewModel.onListAdded = {
             recyclerViewAdapter.listsUpdated()
         }
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
     }
 
 }

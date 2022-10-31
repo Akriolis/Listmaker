@@ -1,6 +1,5 @@
 package com.akrio.listmaker
 
-import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.InputType
@@ -20,16 +19,12 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    val TAG = MainActivity::class.java.simpleName
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProvider(this,
             MainViewModelFactory(PreferenceManager.getDefaultSharedPreferences(this))
         )[MainViewModel::class.java]
-
-        Log.d(TAG,"Calling for ViewModelProvider")
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
@@ -40,7 +35,6 @@ class MainActivity : AppCompatActivity() {
                 .replace(R.id.container, MainFragment.newInstance())
                 .commitNow()
         }
-        Log.d(TAG,"Checking savedInstanceState")
 
         binding.fabButton.setOnClickListener {
             showCreateListDialog()
@@ -54,6 +48,7 @@ class MainActivity : AppCompatActivity() {
 
         val builder = AlertDialog.Builder(this)
         val listTitleEditText = EditText(this)
+
         listTitleEditText.inputType = InputType.TYPE_CLASS_TEXT
 
         builder.setTitle(dialogTitle)
@@ -61,7 +56,7 @@ class MainActivity : AppCompatActivity() {
 
         builder.setPositiveButton(positiveButtonTitle) { dialog, _ ->
             dialog.dismiss()
-                viewModel.saveList(TaskList(listTitleEditText.toString()))
+            viewModel.saveList(TaskList(listTitleEditText.text.toString()))
         }
 
         builder.setNegativeButton(negativeButtonTitle) { dialog, _ ->
