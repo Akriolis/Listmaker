@@ -27,3 +27,6 @@ class ListSelectionRecyclerViewAdapter(private val lists: MutableList<TaskList>)
         notifyItemInserted(lists.size-1)
     }
 }
+
+class ListSelectionViewHolder
+    (val binding: ListSelectionViewHolderBinding): RecyclerView.ViewHolder(binding.root)

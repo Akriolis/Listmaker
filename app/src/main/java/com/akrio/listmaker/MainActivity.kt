@@ -51,19 +51,21 @@ class MainActivity : AppCompatActivity() {
 
         listTitleEditText.inputType = InputType.TYPE_CLASS_TEXT
 
-        builder.setTitle(dialogTitle)
-        builder.setView(listTitleEditText)
+        builder.apply {
+            setTitle(dialogTitle)
+            setView(listTitleEditText)
 
-        builder.setPositiveButton(positiveButtonTitle) { dialog, _ ->
-            dialog.dismiss()
-            viewModel.saveList(TaskList(listTitleEditText.text.toString()))
+            setPositiveButton(positiveButtonTitle) { dialog, _ ->
+                dialog.dismiss()
+                viewModel.saveList(TaskList(listTitleEditText.text.toString()))
+            }
+
+            setNegativeButton(negativeButtonTitle) { dialog, _ ->
+                dialog.dismiss()
+            }
+
+            create().show()
         }
-
-        builder.setNegativeButton(negativeButtonTitle) { dialog, _ ->
-            dialog.dismiss()
-        }
-
-        builder.create().show()
     }
 }
 

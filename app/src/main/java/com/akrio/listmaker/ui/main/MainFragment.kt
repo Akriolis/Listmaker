@@ -31,14 +31,14 @@ class MainFragment : Fragment() {
     ): View {
         binding = FragmentMainBinding.inflate(inflater, container, false)
 
-        binding.listsRecyclerview.layoutManager =
-            LinearLayoutManager(requireContext())
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.listsRecyclerview.layoutManager =
+            LinearLayoutManager(requireContext())
 
         viewModel = ViewModelProvider(requireActivity(),
             MainViewModelFactory(PreferenceManager.getDefaultSharedPreferences(requireActivity()))
@@ -53,10 +53,6 @@ class MainFragment : Fragment() {
         viewModel.onListAdded = {
             recyclerViewAdapter.listsUpdated()
         }
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
     }
 
 }
