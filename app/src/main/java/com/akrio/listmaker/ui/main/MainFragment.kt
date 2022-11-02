@@ -10,15 +10,18 @@ import android.view.ViewGroup
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.akrio.listmaker.ListSelectionRecyclerViewAdapter
+import com.akrio.listmaker.TaskList
 import com.akrio.listmaker.databinding.FragmentMainBinding
 
-class MainFragment : Fragment() {
+class MainFragment(val clickListener: MainFragmentInteractionListener) : Fragment(),ListSelectionRecyclerViewAdapter.ListSelectionRecyclerViewClickListener {
 
-    companion object {
-        fun newInstance() = MainFragment()
+    interface MainFragmentInteractionListener {
+        fun listItemTapped(list: TaskList)
     }
 
-    val TAG = MainFragment::class.java.simpleName
+    companion object {
+        fun newInstance(clickListener: MainFragmentInteractionListener) = MainFragment(clickListener)
+    }
 
     private lateinit var viewModel: MainViewModel
 
@@ -46,13 +49,17 @@ class MainFragment : Fragment() {
             .get(MainViewModel::class.java)
 
         val recyclerViewAdapter =
-            ListSelectionRecyclerViewAdapter(viewModel.lists)
+            ListSelectionRecyclerViewAdapter(viewModel.lists, this)
 
         binding.listsRecyclerview.adapter = recyclerViewAdapter
 
         viewModel.onListAdded = {
             recyclerViewAdapter.listsUpdated()
         }
+    }
+
+    override fun listItemClicked(list: TaskList) {
+        clickListener.listItemTapped(list)
     }
 
 }
