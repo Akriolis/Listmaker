@@ -3,4 +3,9 @@
     <string name="name_of_list">What is the name of your list?</string>
     <string name="create_list">Create</string>
     <string name="cancel">Cancel</string>
+    <string name="add_new_list">Add new list</string>
+    <string name="add_new_tasks">Add new tasks</string>
+    <string name="task_to_add">What is the task you want to add?</string>
+    <string name="add_task">Add</string>
+    <string name="no_data">Add data!</string>
 </resources>

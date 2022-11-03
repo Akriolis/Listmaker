@@ -1,7 +1,15 @@
 package com.akrio.listmaker.ui.detail.ui.detail
 
 import androidx.lifecycle.ViewModel
+import com.akrio.listmaker.TaskList
 
 class ListDetailViewModel : ViewModel() {
-    // TODO: Implement the ViewModel
+    lateinit var onTaskAdded: (() -> Unit)
+
+    lateinit var list: TaskList
+
+    fun addTask(task: String){
+        list.tasks.add(task)
+        onTaskAdded.invoke()
+    }
 }

@@ -27,7 +27,6 @@ class ListSelectionRecyclerViewAdapter(val lists: MutableList<TaskList>, val cli
         holder.itemView.setOnClickListener {
             clickListener.listItemClicked(lists[position])
         }
-
     }
 
     fun listsUpdated(){

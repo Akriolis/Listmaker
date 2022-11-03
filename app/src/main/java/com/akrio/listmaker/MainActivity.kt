@@ -1,5 +1,6 @@
 package com.akrio.listmaker
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -14,6 +15,10 @@ import com.akrio.listmaker.ui.main.MainViewModel
 import com.akrio.listmaker.ui.main.MainViewModelFactory
 
 class MainActivity : AppCompatActivity(), MainFragment.MainFragmentInteractionListener {
+
+    override fun listItemTapped(list: TaskList) {
+        showListDetail(list)
+    }
 
     private lateinit var viewModel: MainViewModel
 
@@ -33,7 +38,7 @@ class MainActivity : AppCompatActivity(), MainFragment.MainFragmentInteractionLi
         if (savedInstanceState == null) {
             val mainFragment = MainFragment.newInstance(this)
             supportFragmentManager.beginTransaction()
-                .replace(R.id.container, mainFragment)
+                .add(R.id.container, mainFragment)
                 .commitNow()
         }
 
@@ -52,18 +57,21 @@ class MainActivity : AppCompatActivity(), MainFragment.MainFragmentInteractionLi
 
         listTitleEditText.inputType = InputType.TYPE_CLASS_TEXT
 
-        with(builder) {
+        builder.apply {
             setTitle(dialogTitle)
             setView(listTitleEditText)
 
             setPositiveButton(positiveButtonTitle) { dialog, _ ->
                 dialog.dismiss()
 
-                val taskList = TaskList(listTitleEditText.text.toString())
-                viewModel.saveList(taskList)
-                showListDetail(taskList)
+                val taskList = TaskList(name = listTitleEditText.text.toString())
+                if (taskList.name.isEmpty()) {
+                    dialog.dismiss()
+                } else {
+                    viewModel.saveList(taskList)
+                    showListDetail(taskList)
+                }
             }
-
             setNegativeButton(negativeButtonTitle) { dialog, _ ->
                 dialog.dismiss()
             }
@@ -75,16 +83,28 @@ class MainActivity : AppCompatActivity(), MainFragment.MainFragmentInteractionLi
     private fun showListDetail(list: TaskList){
         val listDetailIntent = Intent(this, ListDetailActivity::class.java)
         listDetailIntent.putExtra(INTENT_LIST_KEY, list)
-        startActivity(listDetailIntent)
+        @Suppress("DEPRECATION") // TODO figure out how to improve it
+        startActivityForResult(listDetailIntent,LIST_DETAIL_REQUEST_CODE)
     }
 
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        @Suppress("DEPRECATION")
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == LIST_DETAIL_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            data?.let {
+                @Suppress("DEPRECATION")
+                viewModel.updateList(data.getParcelableExtra(INTENT_LIST_KEY)!!)
+                viewModel.refreshLists()
+            }
+        }
+    }
     companion object{
         const val INTENT_LIST_KEY = "list"
+        const val LIST_DETAIL_REQUEST_CODE = 123
     }
 
-    override fun listItemTapped(list: TaskList) {
-        showListDetail(list)
-    }
 
 }
 

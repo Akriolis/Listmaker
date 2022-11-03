@@ -8,5 +8,6 @@ class MainViewModelFactory(private val sharedPreferences: SharedPreferences) : V
     override fun <T : ViewModel> create(modelClass: Class<T>):
             T {
         return MainViewModel(sharedPreferences) as T
+
     }
 }
