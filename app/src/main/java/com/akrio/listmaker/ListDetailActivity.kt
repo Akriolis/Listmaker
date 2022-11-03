@@ -42,6 +42,7 @@ class ListDetailActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this,onBackPressedCallback)
 
         if (savedInstanceState == null) {
+            //TODO what is wrong with unused fragment variable?
             supportFragmentManager.beginTransaction()
                 .replace(R.id.container, ListDetailFragment.newInstance())
                 .commitNow()

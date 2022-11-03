@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.text.InputType
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.akrio.listmaker.databinding.ActivityMainBinding
@@ -36,10 +37,21 @@ class MainActivity : AppCompatActivity(), MainFragment.MainFragmentInteractionLi
         setContentView(view)
 
         if (savedInstanceState == null) {
-            val mainFragment = MainFragment.newInstance(this)
-            supportFragmentManager.beginTransaction()
-                .add(R.id.container, mainFragment)
-                .commitNow()
+            //TODO something wrong with this snippet
+            val mainFragment = MainFragment.newInstance()
+            mainFragment.clickListener = this
+
+            val fragmentContainerViewId: Int =
+                if (binding.mainFragmentContainer == null){
+                    R.id.detail_container
+                } else{
+                    R.id.main_fragment_container
+                }
+
+            supportFragmentManager.commit {
+                setReorderingAllowed(true)
+                add(fragmentContainerViewId,mainFragment)
+            }
         }
 
         binding.fabButton.setOnClickListener {

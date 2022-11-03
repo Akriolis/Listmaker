@@ -13,7 +13,9 @@ import com.akrio.listmaker.ListSelectionRecyclerViewAdapter
 import com.akrio.listmaker.TaskList
 import com.akrio.listmaker.databinding.FragmentMainBinding
 
-class MainFragment(val clickListener: MainFragmentInteractionListener) : Fragment(),ListSelectionRecyclerViewAdapter.ListSelectionRecyclerViewClickListener {
+class MainFragment : Fragment(),ListSelectionRecyclerViewAdapter.ListSelectionRecyclerViewClickListener {
+
+    lateinit var clickListener: MainFragmentInteractionListener
 
     override fun listItemClicked(list: TaskList) {
         clickListener.listItemTapped(list)
@@ -24,7 +26,7 @@ class MainFragment(val clickListener: MainFragmentInteractionListener) : Fragmen
     }
 
     companion object {
-        fun newInstance(clickListener: MainFragmentInteractionListener) = MainFragment(clickListener)
+        fun newInstance() = MainFragment()
     }
 
     private lateinit var viewModel: MainViewModel
