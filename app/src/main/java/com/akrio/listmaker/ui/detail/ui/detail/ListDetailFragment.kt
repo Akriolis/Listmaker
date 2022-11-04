@@ -6,9 +6,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.akrio.listmaker.MainActivity
 import com.akrio.listmaker.R
+import com.akrio.listmaker.TaskList
 import com.akrio.listmaker.databinding.ListDetailFragmentBinding
+import com.akrio.listmaker.ui.main.MainViewModel
+import com.akrio.listmaker.ui.main.MainViewModelFactory
 
 class ListDetailFragment : Fragment() {
 
@@ -18,7 +23,7 @@ class ListDetailFragment : Fragment() {
 
     lateinit var binding: ListDetailFragmentBinding
 
-    private lateinit var viewModel: ListDetailViewModel
+    private lateinit var viewModel: MainViewModel
 
 //    override fun onCreate(savedInstanceState: Bundle?) {
 //        super.onCreate(savedInstanceState)
@@ -36,7 +41,16 @@ class ListDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity())[ListDetailViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity(),
+            MainViewModelFactory(PreferenceManager.getDefaultSharedPreferences(requireActivity())))[MainViewModel::class.java]
+
+        val list: TaskList? =
+            @Suppress("DEPRECATION")
+            arguments?.getParcelable(MainActivity.INTENT_LIST_KEY)
+        if (list != null){
+            viewModel.list = list
+            requireActivity().title = list.name
+        }
 
         val recyclerAdapter = ListItemsRecyclerViewAdapter(viewModel.list)
 

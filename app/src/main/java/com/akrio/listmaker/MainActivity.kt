@@ -6,11 +6,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.InputType
 import android.widget.EditText
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.akrio.listmaker.databinding.ActivityMainBinding
+import com.akrio.listmaker.ui.detail.ui.detail.ListDetailFragment
 import com.akrio.listmaker.ui.main.MainFragment
 import com.akrio.listmaker.ui.main.MainViewModel
 import com.akrio.listmaker.ui.main.MainViewModelFactory
@@ -57,6 +60,7 @@ class MainActivity : AppCompatActivity(), MainFragment.MainFragmentInteractionLi
         binding.fabButton.setOnClickListener {
             showCreateListDialog()
         }
+        onBackPressedDispatcher.addCallback(this,onBackPressedCallback)
     }
 
     private fun showCreateListDialog(){
@@ -92,13 +96,49 @@ class MainActivity : AppCompatActivity(), MainFragment.MainFragmentInteractionLi
         }
     }
 
-    private fun showListDetail(list: TaskList){
-        val listDetailIntent = Intent(this, ListDetailActivity::class.java)
-        listDetailIntent.putExtra(INTENT_LIST_KEY, list)
-        @Suppress("DEPRECATION") // TODO figure out how to improve it
-        startActivityForResult(listDetailIntent,LIST_DETAIL_REQUEST_CODE)
+    private fun showCreateTaskDialog() {
+        val taskEditText = EditText(this)
+        taskEditText.inputType = InputType.TYPE_CLASS_TEXT
+
+        AlertDialog.Builder(this).apply {
+            setTitle(R.string.task_to_add)
+            setView(taskEditText)
+            setPositiveButton(R.string.add_task) { dialog, _ ->
+
+                val task = taskEditText.text.toString()
+                if (task.trim().isEmpty()){
+                    dialog.dismiss()
+                } else {
+                    viewModel.addTask(task)
+
+                    dialog.dismiss()
+                }
+            }
+            setNegativeButton(R.string.cancel){ dialog,_->
+                dialog.dismiss()
+            }
+            create().show()
+        }
     }
 
+    private fun showListDetail(list: TaskList) {
+        if (binding.mainFragmentContainer == null) {
+            val listDetailIntent = Intent(this, ListDetailActivity::class.java)
+            listDetailIntent.putExtra(INTENT_LIST_KEY, list)
+            @Suppress("DEPRECATION") // TODO figure out how to improve it
+            startActivityForResult(listDetailIntent, LIST_DETAIL_REQUEST_CODE)
+        }else{
+            val bundle = bundleOf(INTENT_LIST_KEY to list)
+            supportFragmentManager.commit{
+                setReorderingAllowed(true)
+                replace(R.id.list_detail_fragment_container,ListDetailFragment::class.java, bundle, null)
+            }
+
+            binding.fabButton.setOnClickListener {
+                showCreateTaskDialog()
+            }
+        }
+    }
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         @Suppress("DEPRECATION")
@@ -117,6 +157,26 @@ class MainActivity : AppCompatActivity(), MainFragment.MainFragmentInteractionLi
         const val LIST_DETAIL_REQUEST_CODE = 123
     }
 
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            val listDetailFragment =
+                supportFragmentManager.findFragmentById(R.id.list_detail_fragment_container)
 
+            if (listDetailFragment == null) {
+                finish()
+            } else {
+                title = resources.getString(R.string.app_name)
+
+                supportFragmentManager.commit {
+                    setReorderingAllowed(true)
+                    remove(listDetailFragment)
+                }
+
+                binding.fabButton.setOnClickListener {
+                    showCreateListDialog()
+                }
+            }
+        }
+    }
 }
 

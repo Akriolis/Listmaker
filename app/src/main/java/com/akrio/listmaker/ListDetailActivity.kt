@@ -9,22 +9,26 @@ import android.widget.EditText
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import com.akrio.listmaker.databinding.ListDetailActivityBinding
 import com.akrio.listmaker.ui.detail.ui.detail.ListDetailFragment
 import com.akrio.listmaker.ui.detail.ui.detail.ListDetailViewModel
+import com.akrio.listmaker.ui.main.MainViewModel
+import com.akrio.listmaker.ui.main.MainViewModelFactory
 
 class ListDetailActivity : AppCompatActivity() {
 
     lateinit var binding: ListDetailActivityBinding
 
-    lateinit var viewModel: ListDetailViewModel
+    lateinit var viewModel: MainViewModel
 
     lateinit var fragment: ListDetailFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[ListDetailViewModel::class.java]
+        viewModel = ViewModelProvider(this, MainViewModelFactory
+            (PreferenceManager.getDefaultSharedPreferences(this)))[MainViewModel::class.java]
 
         @Suppress("DEPRECATION")
         viewModel.list = intent.getParcelableExtra(MainActivity.INTENT_LIST_KEY)!!
